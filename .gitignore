@@ -1,0 +1,5 @@
+*.pyc
+.idea/
+db.sqlite3
+media/
+academy/local_settings.py
