@@ -1,9 +1,8 @@
 from django.http import HttpResponse
 import requests
 from requests.auth import HTTPBasicAuth
-from datetime import datetime
-import base64
 import json
+from . mpesa_credentials import MpesaAccessToken, LipanaMpesaPpassword
 
 
 def getAccessToken(request):
@@ -19,21 +18,21 @@ def getAccessToken(request):
 
 
 def lipa_na_mpesa_online(request):
-    access_token = getAccessToken()
+    access_token = MpesaAccessToken.validated_mpesa_access_token
     api_url = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
     headers = {"Authorization": "Bearer %s" % access_token}
     request = {
-        "BusinessShortCode": "174379",
-        "Password": "",
-        "Timestamp": "",
+        "BusinessShortCode": LipanaMpesaPpassword.Business_short_code,
+        "Password": LipanaMpesaPpassword.decode_password,
+        "Timestamp": LipanaMpesaPpassword.lipa_time,
         "TransactionType": "CustomerPayBillOnline",
-        "Amount": " ",
-        "PartyA": " ",
-        "PartyB": " ",
-        "PhoneNumber": " ",
-        "CallBackURL": "https://ip_address:port/callback",
-        "AccountReference": " ",
-        "TransactionDesc": " "
+        "Amount": 1,
+        "PartyA": 254728851119,
+        "PartyB": LipanaMpesaPpassword.Business_short_code,
+        "PhoneNumber": 254728851119,
+        "CallBackURL": "https://sandbox.safaricom.co.ke/mpesa/",
+        "AccountReference": "Henry",
+        "TransactionDesc": "Testing stk push"
     }
 
     response = requests.post(api_url, json=request, headers=headers)
